@@ -10,3 +10,17 @@ Timestamped
 - Verified from clean: `./gradlew clean test run` compiles, passes both smoke tests, and runs.
 - Initiated ARCHITECTURE.md and README.md.
 - Committed `chore: initialize ledger core project`.
+
+## 2026-08-27T21:39:32+0400
+
+- Added `Currency` (AED at 2 dp, BHD at 3 dp) and `Money`.
+- `Money` holds a `Long` count of minor units and a currency. Two invariants hold by
+  construction rather than by convention: the constructor is private so the only decimal entry
+  point is `of`, which rounds HALF_UP to the currency scale, and every binary operation rejects
+  a differing currency instead of converting.
+- Kept rounding out of arithmetic. `plus` and `minus` are exact integer operations using
+  `Math.addExact`, so an overflow fails loudly rather than wrapping. Rounding happens only where
+  a decimal enters the domain. That separation is what lets interest accrue in BigDecimal and
+  convert exactly once.
+- Tests are green, covering all uses cases for precision,
+
