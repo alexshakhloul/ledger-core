@@ -44,3 +44,8 @@ Timestamped
 - Authorization decisions read the balance as of the booking day; reporting, fees and interest
   read value-dated closing balances.
 - 87 tests green, and `./gradlew knownFailureTest` fails as designed.
+
+## 2026-08-28T15:15:07+0400
+
+- Wrote NUMBERS.md, AMBIGUITIES.md and REJECTED.md.
+- Started Architecture & trade-offs document
