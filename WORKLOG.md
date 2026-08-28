@@ -28,3 +28,19 @@ Timestamped
 
 - Added the append-only ledger: `EntryType`, `Day`, `AccountId`/`EventId`/`EntryId`, `Account`,
   `LedgerEntry`, `Ledger`.
+
+## 2026-08-28T12:58:42+0400
+
+- Built the rest of the engine in one pass: authorizations and holds, settlement validation,
+  reversal, the overdraft fee policy, interest, the instalment split, the replay engine, and the
+  console report.
+- `Ledger` stays a plain record of history. Posting and fee assessment are paired in the replay
+  engine instead, so no policy is baked into the data structure.
+- The fee rule is the one real decision. Assess the value date of the entry just posted, and no
+  other day.
+- The idempotency key is claimed before the fee is posted. `a day already charged is never
+  charged again`, the fee is value-dated to the day it charges, so re-entry would
+  otherwise charge forever.
+- Authorization decisions read the balance as of the booking day; reporting, fees and interest
+  read value-dated closing balances.
+- 87 tests green, and `./gradlew knownFailureTest` fails as designed.

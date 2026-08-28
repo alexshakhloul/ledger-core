@@ -1,6 +1,6 @@
 package ledger.domain
 
-class Ledger(private val account: Account) {
+class Ledger(val account: Account) {
     private val postedEntries = mutableListOf<LedgerEntry>()
     private var nextEntryId = 1
 

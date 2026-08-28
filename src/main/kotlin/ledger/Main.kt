@@ -1,11 +1,13 @@
 package ledger
 
+import ledger.replay.EventStream
+import ledger.replay.ReplayEngine
+import ledger.report.ConsoleReporter
+
 /**
  * Entry point for the ledger core.
  */
 fun main() {
-    println("In-memory account ledger core")
-    println("Window: Day 1 to Day 6. Accounts: ACC-001 (AED), ACC-002 (BHD).")
-    println()
-    println("No events replayed yet.")
+    val result = ReplayEngine(EventStream.ACCOUNTS).replay(EventStream.EVENTS)
+    print(ConsoleReporter.render(result))
 }

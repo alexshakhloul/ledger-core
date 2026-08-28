@@ -25,3 +25,19 @@ tasks.test {
 kotlin {
     jvmToolchain(21)
 }
+
+val knownFailureTag = "known-failure"
+
+tasks.test {
+    useJUnitPlatform { excludeTags(knownFailureTag) }
+    testLogging { events("passed", "skipped", "failed") }
+}
+
+tasks.register<Test>("knownFailureTest") {
+    group = "verification"
+    description = "Runs the one intentionally failing test. Expected to FAIL."
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    useJUnitPlatform { includeTags(knownFailureTag) }
+    testLogging { events("passed", "skipped", "failed") }
+}
