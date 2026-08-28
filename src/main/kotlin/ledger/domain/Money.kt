@@ -3,7 +3,7 @@ package ledger.domain
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class Money private constructor(val currency: Currency, val minor: Long) : Comparable<Money> {
+class Money private constructor(val currency: Currency, val amount: Long) : Comparable<Money> {
 
     companion object {
         fun of(currency: Currency, amount: BigDecimal): Money {
@@ -22,30 +22,30 @@ class Money private constructor(val currency: Currency, val minor: Long) : Compa
         fun bhd(amount: String): Money = of(Currency.BHD, amount)
     }
 
-    val isNegative: Boolean get() = minor < 0
-    val isPositive: Boolean get() = minor > 0
-    val isZero: Boolean get() = minor == 0L
+    val isNegative: Boolean get() = amount < 0
+    val isPositive: Boolean get() = amount > 0
+    val isZero: Boolean get() = amount == 0L
     operator fun plus(other: Money): Money =
-        Money(currency, Math.addExact(minor, sameCurrency(other).minor))
+        Money(currency, Math.addExact(amount, sameCurrency(other).amount))
 
     operator fun minus(other: Money): Money =
-        Money(currency, Math.subtractExact(minor, sameCurrency(other).minor))
+        Money(currency, Math.subtractExact(amount, sameCurrency(other).amount))
 
-    operator fun unaryMinus(): Money = Money(currency, Math.negateExact(minor))
+    operator fun unaryMinus(): Money = Money(currency, Math.negateExact(amount))
 
-    override fun compareTo(other: Money): Int = minor.compareTo(sameCurrency(other).minor)
+    override fun compareTo(other: Money): Int = amount.compareTo(sameCurrency(other).amount)
 
     /** The exact decimal value, at the currency's scale. */
-    fun toBigDecimal(): BigDecimal = BigDecimal.valueOf(minor, currency.scale)
+    fun toBigDecimal(): BigDecimal = BigDecimal.valueOf(amount, currency.scale)
 
     private fun sameCurrency(other: Money): Money =
         if (other.currency == currency) other
         else throw CurrencyMismatchException(currency, other.currency)
 
     override fun equals(other: Any?): Boolean =
-        this === other || (other is Money && currency == other.currency && minor == other.minor)
+        this === other || (other is Money && currency == other.currency && amount == other.amount)
 
-    override fun hashCode(): Int = 31 * currency.hashCode() + minor.hashCode()
+    override fun hashCode(): Int = 31 * currency.hashCode() + amount.hashCode()
 
     override fun toString(): String = "${currency.code} ${toBigDecimal().toPlainString()}"
 }

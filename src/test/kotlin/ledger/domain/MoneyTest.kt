@@ -7,14 +7,14 @@ class MoneyTest {
 
     @Test
     fun `AED holds two decimal places`() {
-        assertEquals(2500L, Money.aed("25.00").minor)
-        assertEquals(120000L, Money.aed("1200.00").minor)
+        assertEquals(2500L, Money.aed("25.00").amount)
+        assertEquals(120000L, Money.aed("1200.00").amount)
     }
 
     @Test
     fun `BHD holds three decimal places`() {
-        assertEquals(10000L, Money.bhd("10.000").minor)
-        assertEquals(3333L, Money.bhd("3.333").minor)
+        assertEquals(10000L, Money.bhd("10.000").amount)
+        assertEquals(3333L, Money.bhd("3.333").amount)
     }
 
     @Test

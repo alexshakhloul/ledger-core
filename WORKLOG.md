@@ -22,5 +22,9 @@ Timestamped
   `Math.addExact`, so an overflow fails loudly rather than wrapping. Rounding happens only where
   a decimal enters the domain. That separation is what lets interest accrue in BigDecimal and
   convert exactly once.
-- Tests are green, covering all uses cases for precision,
+- Tests are green, covering all uses cases for precision
 
+## 2026-08-28T11:27:36+0400
+
+- Added the append-only ledger: `EntryType`, `Day`, `AccountId`/`EventId`/`EntryId`, `Account`,
+  `LedgerEntry`, `Ledger`.
