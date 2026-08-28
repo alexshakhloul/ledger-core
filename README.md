@@ -11,6 +11,9 @@ The design and the reasoning behind every contested rule are in
 ## Running it
 
 Make sure you have JDK 21 installed and java_home is pointing to it.
+It's built with Kotlin 2.0.21 on a JDK 21 toolchain and Gradle 8.14.3.
+
+The wrapper is checked in, so ./gradlew is the only entry point you need.
 
 ```bash
 ./gradlew run     # replays the stream and prints the daily report
@@ -48,11 +51,6 @@ for a debit that arrived three days later.
 **Within one day block, the lines are dated differently on purpose.** The balance and fee lines are
 value-dated. The events, authorization and error lines are booking-dated. This is intentional
 rather than a bug.
-
-## Build requirements
-
-Kotlin 2.0.21 on a JDK 21 toolchain, built with Gradle 8.14.3. The wrapper is checked in, so
-`./gradlew` is the only entry point you need.
 
 ## Layout
 
