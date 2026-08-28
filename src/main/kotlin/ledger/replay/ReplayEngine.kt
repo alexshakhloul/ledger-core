@@ -132,8 +132,7 @@ class ReplayEngine(accounts: List<Account>) {
 
     private fun reverse(event: CompensationEvent) {
         val ledger = ledgerFor(event.accountId)
-        val originalId = entryByEvent[event.reverses]
-        val original = originalId?.let { id -> ledger.entries().firstOrNull { it.entryId == id } }
+        val original = entryByEvent[event.reverses]?.let(ledger::entry)
         if (original == null) {
             refuse(event, "unknown entry to reverse ${event.reverses}")
             return

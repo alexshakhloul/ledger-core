@@ -2,6 +2,7 @@ package ledger.domain
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class LedgerTest {
@@ -145,6 +146,44 @@ class LedgerTest {
             Money.bhd("10.000"),
             ledger.closingBalance(Day(6), excluding = setOf(EntryType.INTEREST_CAPITALIZATION)),
         )
+    }
+
+    @Test
+    fun `an entry can be found by id without copying history`() {
+        val ledger = aed()
+        ledger.append(EntryType.CREDIT, Money.aed("1200.00"), Day(1))
+        val second = ledger.append(EntryType.DEBIT, Money.aed("950.00"), Day(1))
+
+        assertEquals(second, ledger.entry(second.entryId))
+        assertNull(ledger.entry(EntryId(99)))
+    }
+
+    @Test
+    fun `the balance index always agrees with a full scan of history`() {
+        val ledger = fullyReplayedAcc001()
+        ledger.append(EntryType.INTEREST_CAPITALIZATION, Money.aed("0.98"), Day(6))
+
+        val exclusionsToCheck = listOf(
+            emptySet(),
+            setOf(EntryType.INTEREST_CAPITALIZATION),
+            setOf(EntryType.OVERDRAFT_FEE),
+            setOf(EntryType.INTEREST_CAPITALIZATION, EntryType.OVERDRAFT_FEE),
+        )
+
+        for (day in Day.WINDOW) {
+            for (excluding in exclusionsToCheck) {
+                val byScan = ledger.account.openingBalance + ledger.entries()
+                    .filter { it.valueDate <= day && it.type !in excluding }
+                    .map { it.signedAmount }
+                    .sum(Currency.AED)
+
+                assertEquals(
+                    byScan,
+                    ledger.closingBalance(day, excluding),
+                    "$day excluding $excluding",
+                )
+            }
+        }
     }
 
     @Test

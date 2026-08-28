@@ -1,8 +1,14 @@
 package ledger.domain
 
+
 class Ledger(val account: Account) {
+
     private val postedEntries = mutableListOf<LedgerEntry>()
+    private val entriesById = mutableMapOf<EntryId, LedgerEntry>()
     private var nextEntryId = 1
+
+    private val dailyTotals: Array<Array<Money>> =
+        Array(Day.LAST) { Array(EntryType.entries.size) { Money.zero(account.currency) } }
 
     fun append(
         type: EntryType,
@@ -17,12 +23,9 @@ class Ledger(val account: Account) {
         require(!amount.isNegative) {
             "entry amount is a magnitude and must not be negative, was $amount"
         }
-        // A reversal must offset something real on this account. EntryId is only unique within
-        // one ledger, so an id borrowed from another account would resolve to the wrong entry.
-        // Catching it here fails at the mistake rather than leaving a dangling reference for
-        // the report to trip over later.
+
         if (reversalOf != null) {
-            require(postedEntries.any { it.entryId == reversalOf }) {
+            require(entriesById.containsKey(reversalOf)) {
                 "cannot reverse $reversalOf: no such entry on ${account.id}"
             }
         }
@@ -38,29 +41,28 @@ class Ledger(val account: Account) {
         )
         nextEntryId += 1
         postedEntries += entry
+        entriesById[entry.entryId] = entry
+
+        val totalsForDay = dailyTotals[valueDate.value - Day.FIRST]
+        totalsForDay[type.ordinal] = totalsForDay[type.ordinal] + entry.signedAmount
+
         return entry
     }
 
-    /**
-     * The account's closing balance on [day]: everything value-dated on or before it.
-     *
-     * This is the value-dating rule, and the central query of the whole design. It recomputes
-     * from full history every call and pays no attention to the order entries were appended in,
-     * which is exactly what lets E7 (posted on booking Day 5, value-dated Day 2) change what
-     * Day 2 closed at.
-     *
-     * [excluding] leaves out entries of the given types. We'll need it for the interest base:
-     * an accrual computed from a balance that already contains the capitalization would be
-     * defined in terms of itself.
-     */
-    fun closingBalance(day: Day, excluding: Set<EntryType> = emptySet()): Money =
-        account.openingBalance + postedEntries
-            .filter { it.valueDate <= day && it.type !in excluding }
-            .map { it.signedAmount }
-            .sum(account.currency)
+    fun closingBalance(day: Day, excluding: Set<EntryType> = emptySet()): Money {
+        var balance = account.openingBalance
+        for (index in 0 until day.value - Day.FIRST + 1) {
+            val totalsForDay = dailyTotals[index]
+            for (type in EntryType.entries) {
+                if (type !in excluding) balance += totalsForDay[type.ordinal]
+            }
+        }
+        return balance
+    }
 
-    //ordered entries by post
     fun entries(): List<LedgerEntry> = postedEntries.toList()
+
+    fun entry(entryId: EntryId): LedgerEntry? = entriesById[entryId]
 
     fun entriesOfType(type: EntryType): List<LedgerEntry> =
         postedEntries.filter { it.type == type }
@@ -74,3 +76,4 @@ class EntryCurrencyMismatchException(
     "entry in ${entryCurrency.code} does not belong on $accountId, " +
             "which is a ${accountCurrency.code} account",
 )
+

@@ -49,3 +49,13 @@ Timestamped
 
 - Wrote NUMBERS.md, AMBIGUITIES.md and REJECTED.md.
 - Started Architecture & trade-offs document
+
+## 2026-08-28T16:15:07+0400
+
+- `Ledger` now keeps signed totals per value date and entry type, updated on append, so `closingBalance` sums at
+   most one cell per day per type instead of filtering the whole entry list. The fee policy calls
+   that query once per posted entry, so the replay was quadratic in entry count and is now linear.
+- Also keyed entries by id. `ReplayEngine` was copying all history through `entries()` to find
+  a single row when applying a compensation, and `append` was scanning the list to validate
+  `reversalOf`. Both are direct lookups now.
+- The index is derived, not a second source of truth.
