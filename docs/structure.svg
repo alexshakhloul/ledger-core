@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 690" width="920" height="690" role="img" aria-label="Component structure: the event stream flows into the replay engine, which writes to per-account ledgers, authorization state and errors. The overdraft fee and interest policies also append entries. The console reporter reads all of it to produce the daily report.">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a"/>
+    </marker>
+    <marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8250df"/>
+    </marker>
+  </defs>
+
+  <style>
+    .bx   { fill:#ffffff; stroke:#57606a; stroke-width:1.5; }
+    .name { font:600 15px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; fill:#1f2328; }
+    .sub  { font:400 12.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; fill:#57606a; }
+    .grp  { font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; fill:#57606a; }
+    .edge { stroke:#57606a; stroke-width:1.5; fill:none; marker-end:url(#arw); }
+    .dash { stroke:#8250df; stroke-width:1.5; fill:none; stroke-dasharray:5 4; marker-end:url(#arwd); }
+    .lbl  { font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; fill:#57606a; }
+    .lblp { font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; fill:#8250df; }
+  </style>
+
+  <rect width="920" height="690" fill="#ffffff"/>
+
+  <rect class="bx" x="180" y="18" width="260" height="54" rx="6"/>
+  <text class="name" x="310" y="41" text-anchor="middle">EventStream</text>
+  <text class="sub"  x="310" y="59" text-anchor="middle">E1 to E10, replayed in listed order</text>
+
+  <rect class="bx" x="180" y="112" width="260" height="62" rx="6"/>
+  <text class="name" x="310" y="136" text-anchor="middle">ReplayEngine</text>
+  <text class="sub"  x="310" y="154" text-anchor="middle">validate, then apply or refuse</text>
+
+  <rect class="bx" x="560" y="100" width="300" height="54" rx="6"/>
+  <text class="name" x="710" y="123" text-anchor="middle">OverdraftFeePolicy</text>
+  <text class="sub"  x="710" y="141" text-anchor="middle">assesses the posted value date only</text>
+
+  <rect class="bx" x="560" y="176" width="300" height="54" rx="6"/>
+  <text class="name" x="710" y="199" text-anchor="middle">InterestPolicy</text>
+  <text class="sub"  x="710" y="217" text-anchor="middle">accrues daily, capitalizes once</text>
+
+  <rect x="30" y="308" width="860" height="96" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+  <text class="grp" x="44" y="327">Domain state</text>
+
+  <rect class="bx" x="48" y="334" width="250" height="56" rx="6"/>
+  <text class="name" x="173" y="356" text-anchor="middle">Ledger, per account</text>
+  <text class="sub"  x="173" y="374" text-anchor="middle">append-only entries</text>
+
+  <rect class="bx" x="336" y="334" width="250" height="56" rx="6"/>
+  <text class="name" x="461" y="356" text-anchor="middle">Authorizations</text>
+  <text class="sub"  x="461" y="374" text-anchor="middle">holds, outside the ledger</text>
+
+  <rect class="bx" x="624" y="334" width="248" height="56" rx="6"/>
+  <text class="name" x="748" y="356" text-anchor="middle">Errors</text>
+  <text class="sub"  x="748" y="374" text-anchor="middle">refused events</text>
+
+  <rect class="bx" x="336" y="472" width="250" height="54" rx="6"/>
+  <text class="name" x="461" y="495" text-anchor="middle">ConsoleReporter</text>
+  <text class="sub"  x="461" y="513" text-anchor="middle">once, after the whole replay</text>
+
+  <rect class="bx" x="336" y="584" width="250" height="46" rx="6"/>
+  <text class="name" x="461" y="613" text-anchor="middle">Daily report</text>
+
+  <path class="edge" d="M 310 72 V 112"/>
+
+  <path class="edge" d="M 440 127 H 560"/>
+  <text class="lbl" x="500" y="119" text-anchor="middle">after every entry</text>
+
+  <path class="edge" d="M 440 168 H 520 V 203 H 560"/>
+  <text class="lbl" x="500" y="161" text-anchor="middle">after the last event</text>
+
+  <path class="edge" d="M 250 174 V 236 H 190 V 334"/>
+  <text class="lbl" x="198" y="230">append</text>
+
+  <path class="edge" d="M 370 174 V 334"/>
+  <text class="lbl" x="378" y="196">approve or reject</text>
+
+  <path class="edge" d="M 420 174 V 252 H 748 V 334"/>
+  <text class="lbl" x="600" y="246" text-anchor="middle">refuse</text>
+
+  <path class="edge" d="M 640 154 V 272 H 140 V 334"/>
+  <text class="lbl" x="560" y="266" text-anchor="middle">fee entry</text>
+
+  <path class="edge" d="M 690 230 V 292 H 240 V 334"/>
+  <text class="lbl" x="450" y="286" text-anchor="middle">one credit on Day 6</text>
+
+  <path class="edge" d="M 173 390 V 436 H 461 V 472"/>
+  <path class="edge" d="M 461 390 V 472"/>
+  <path class="edge" d="M 748 390 V 436 H 461"/>
+
+  <path class="edge" d="M 461 526 V 584"/>
+
+  <path class="dash" d="M 180 45 H 20 V 499 H 336"/>
+  <text class="lblp" x="28" y="488">events per day</text>
+</svg>
